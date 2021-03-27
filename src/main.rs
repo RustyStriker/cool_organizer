@@ -3,7 +3,7 @@ use cool_organizer::*;
 use std::fs;
 
 fn main() {
-    const DEFAULT_FILE : &str = "/home/avivbuntu/.local/share/tasks.toml";
+    const DEFAULT_FILE : &str = "./tasks.toml";
 
 
     let matches = clap::App::new("cool organizer")

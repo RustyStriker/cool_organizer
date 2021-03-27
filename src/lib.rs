@@ -17,6 +17,7 @@ impl TasksManager {
                 prio_1: String::new(),
                 prio_2: String::new(),
                 prio_3: String::new(),
+                done : String::new(),
                 show_days_forward : -1,
             },
             tasks: Vec::new(),
@@ -205,11 +206,16 @@ impl Task {
         // Category:
         //      - [x] Task (sub_cat) - due in X days for d/m
         
-        let c = match self.priority {
-            1 => &colors.prio_1,
-            2 => &colors.prio_2,
-            3 => &colors.prio_3,
-            _ => &colors.default
+        let c = if self.done { 
+            &colors.done
+        } 
+        else { 
+            match self.priority {
+                1 => &colors.prio_1,
+                2 => &colors.prio_2,
+                3 => &colors.prio_3,
+                _ => &colors.default
+            }
         };
 
         let days = self.days_remianing().unwrap_or(-1);
@@ -220,10 +226,6 @@ impl Task {
         let mut s = String::from(&format!("${{{}}}- ", c));
         //                                       ^^^^^^ if you do {{}} it treats is a written explicitly {}(so it doesnt replace it)
         
-
-        if self.done {
-            s.push_str("[x] ");
-        }
         s.push_str(&self.name);
 
         if !self.sub_category.is_empty() && sub {
@@ -250,6 +252,7 @@ impl Task {
 pub struct FormatParams {
     pub default : String,
     pub category : String,
+    pub done : String,
     pub prio_1 : String,
     pub prio_2 : String,
     pub prio_3 : String,
