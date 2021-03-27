@@ -31,6 +31,10 @@ impl TasksManager {
         fs::write(path, toml)
     }
 
+    pub fn add_task(&mut self, task : Task) {
+        self.tasks.push(task);
+    }
+
     pub fn full_print_for_conky(&self) -> String {
         let tasks = &self.tasks;
         let colors = &self.colors;

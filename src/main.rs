@@ -1,6 +1,8 @@
 use clap::{Arg, SubCommand};
 use cool_organizer::*;
+use datetime::{LocalDate, Month};
 use std::fs;
+use std::io::stdin;
 
 fn main() {
     const DEFAULT_FILE : &str = "./tasks.toml";
@@ -8,8 +10,8 @@ fn main() {
 
     let matches = clap::App::new("cool organizer")
         .arg(Arg::with_name("file")
-                .short("t")
-                .long("task")
+                .short("f")
+                .long("file")
                 .default_value(DEFAULT_FILE)
                 .takes_value(true)
                 .value_name("FILE")
@@ -22,6 +24,9 @@ fn main() {
             )
         .subcommand(SubCommand::with_name("create_example")
                 .about("creates a default config")
+            )
+        .subcommand(SubCommand::with_name("dadd")
+                .about("adds a new task")
             )
     .get_matches()
     ;

@@ -1,0 +1,16 @@
+[colors]
+default = ""
+category = ""
+done = ""
+prio_1 = ""
+prio_2 = ""
+prio_3 = ""
+show_days_forward = -1
+sub_category = ""
+
+[[tasks]]
+category = "Fix this thing\nCoding\n"
+sub_category = "Fix this thing\nCoding\n\n"
+priority = 0
+name = "Fix this thing\n"
+done = false
