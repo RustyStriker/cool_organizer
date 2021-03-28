@@ -1,6 +1,7 @@
 use serde_derive::{Serialize,Deserialize};
 use datetime::{LocalDate, convenience::Today, DatePiece};
-use std::{error::Error, fs};
+use std::{error::Error, fs,env};
+
 
 #[derive(Serialize,Deserialize)]
 pub struct TasksManager {
@@ -8,6 +9,29 @@ pub struct TasksManager {
     pub tasks : Vec<Task>,
 }
 impl TasksManager {
+    pub fn default_path() -> String {
+        let home = env::var("HOME");
+        let other = ".";
+
+        let mut res = match home {
+            Ok(s) => {
+                if !s.is_empty() {
+                    let mut s = s;
+                    s.push_str("/.local/share");
+                    s
+                }
+                else {
+                    String::from(other)
+                }
+            },
+            Err(_) => String::from(other)
+        };
+        
+        res.push_str("/tasks.toml");
+
+        res
+    }
+
     pub fn default() -> TasksManager {
         TasksManager {
             colors : FormatParams {
@@ -27,8 +51,11 @@ impl TasksManager {
     pub fn save(&self, path : &str) -> Result<(), impl Error> {
         let toml = toml::to_string(self).unwrap();
 
+        eprintln!("saving at {}", path);
+
         let _ = fs::File::create(path);
         fs::write(path, toml)
+
     }
 
     pub fn add_task(&mut self, task : Task) {
