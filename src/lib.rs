@@ -66,8 +66,10 @@ impl TasksManager {
             group.reverse();
     
             // Begin to print the stuff
-            gs.push_str(&format!("${{{}}}{}:\n", colors.category, cat));
-    
+            if !cat.is_empty() {
+                gs.push_str(&format!("${{{}}}{}:\n", colors.category, cat));
+            }
+
             let mut inserted = false;
 
             for t in group {
