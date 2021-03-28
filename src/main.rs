@@ -2,7 +2,6 @@ use clap::{Arg, SubCommand};
 use cool_organizer::*;
 use datetime::{LocalDate, Month};
 use std::fs;
-use std::io::stdin;
 
 fn main() {
     const DEFAULT_FILE : &str = "./tasks.toml";
@@ -52,7 +51,7 @@ fn main() {
         let _ = tasks.save(DEFAULT_FILE);
     }
     else {
-        println!("{}", tasks.full_print_for_conky());
+        println!("{}", tasks.full_print_for_conky().trim_end_matches('\n'));
     }
 
 }
