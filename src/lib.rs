@@ -58,6 +58,13 @@ impl TasksManager {
 
     }
 
+    pub fn remove_done(&mut self) {
+        self.tasks = self.tasks.iter()
+            .filter(|t| !(t.done && t.days_remianing().unwrap_or(-1) < 0))
+            .map(|t| t.clone())
+            .collect();
+    }
+
     pub fn add_task(&mut self, task : Task) {
         self.tasks.push(task);
     }
