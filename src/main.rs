@@ -21,10 +21,16 @@ fn main() {
                 .long("conky")
                 .takes_value(false)    
             )
+        .arg(Arg::with_name("remove_done")
+                .help("removes all past tasks that are done")
+                .short("r")
+                .long("remove_done")
+                .takes_value(false)
+            )
         .subcommand(SubCommand::with_name("create_example")
                 .about("creates a default config")
             )
-        .subcommand(SubCommand::with_name("dadd")
+        .subcommand(SubCommand::with_name("add")
                 .about("adds a new task")
             )
     .get_matches()
@@ -40,6 +46,13 @@ fn main() {
 
     let mut tasks : TasksManager = toml::from_str(&file).unwrap_or(TasksManager::default());
 
+    let mut should_save = false;
+
+    if let Some(_a) = matches.args.get("remove_done") {
+        tasks.remove_done();
+        should_save = true;
+    }
+
     if let Some(_arg) = matches.subcommand_matches("create_example") {
         tasks.tasks.push(
             Task::new("example")
@@ -48,9 +61,9 @@ fn main() {
                 .due(Some(Date::ymd(2021, 79)))
         );
 
-        let _ = tasks.save(&default_path);
+        should_save = true;
     }
-    else if let Some(_arg) = matches.subcommand_matches("dadd") {
+    else if let Some(_arg) = matches.subcommand_matches("add") {
         // Do an "add task" dialog - use the stdout().flush() this time
         println!("Add task dialog init...");
 
@@ -85,13 +98,17 @@ fn main() {
 
         tasks.add_task(task);
 
-        let _ = tasks.save(path);
+        should_save = true;
 
     }
     else {
         println!("{}", tasks.full_print_for_conky().trim_end_matches('\n'));
     }
 
+
+    if should_save {
+        let _ = tasks.save(&path);
+    }
 }
 
 fn parse_to_date(s : &str) -> Option<Date> {
