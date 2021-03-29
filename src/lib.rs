@@ -122,6 +122,18 @@ impl TasksManager {
     
         res
     }
+
+    pub fn tasks_list(&self) -> String {
+        let mut s = String::new();
+        let mut i = 0;
+
+        for t in &self.tasks {
+            s.push_str(&format!("{} {}\n",i,t.formatted(true)));
+            i += 1;
+        }
+
+        s
+    }
 }
 
 #[derive(Clone,Serialize,Deserialize, Copy)]
