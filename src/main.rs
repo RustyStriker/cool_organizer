@@ -225,7 +225,7 @@ fn main() {
             }
         }
         _ => {
-            println!("{}", tasks.full_print_for_conky().trim_end_matches('\n'));
+            println!("{}", tasks.full_print_for_conky().trim());
         }
     }
 

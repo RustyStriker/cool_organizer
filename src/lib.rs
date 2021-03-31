@@ -270,13 +270,13 @@ impl Task {
             }
         };
 
-        let days = self.days_remianing().unwrap_or(-1);
-        if days > colors.show_days_forward && colors.show_days_forward > 0 {
+        let days = self.days_remianing().unwrap_or(0);
+        if (days > colors.show_days_forward && colors.show_days_forward > 0) || days < 0 {
             return String::new();
         }
 
         let mut s = String::from(&format!("${{{}}}- ", c));
-        //                                       ^^^^^^ if you do {{}} it treats is a written explicitly {}(so it doesnt replace it)
+        //                                       ^^^^^^ if you do {{}} it treats as a written explicitly {}(so it doesnt replace it)
         
         s.push_str(&self.name);
 
