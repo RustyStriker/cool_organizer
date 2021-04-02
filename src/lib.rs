@@ -58,6 +58,10 @@ impl TasksManager {
 
     }
 
+    pub fn remove_task(&mut self, task_at : usize) {
+        self.tasks.remove(task_at);
+    } 
+
     pub fn remove_done(&mut self) {
         self.tasks = self.tasks.iter()
             .filter(|t| !(t.done && t.days_remianing().unwrap_or(-1) < 0))

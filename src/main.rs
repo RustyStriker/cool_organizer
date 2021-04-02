@@ -36,6 +36,9 @@ fn main() {
         .subcommand(SubCommand::with_name("edit")
                 .about("edit a task")
             )
+        .subcommand(SubCommand::with_name("remove")
+            .about("removes a task")
+        )
     .get_matches()
     ;
 
@@ -221,6 +224,41 @@ fn main() {
                     }
 
                 }                
+
+            }
+        }
+        "remove" => {
+            println!("Tasks:");
+            println!("{}",tasks.tasks_list());
+            print!("Remove task: ");
+            stdout().flush().expect("couldn't flush to screen");
+
+            let mut input = String::new();
+            stdin().read_line(&mut input).expect("couldn't get input");
+
+            let t : i32 = input.trim().parse().unwrap_or(-1);
+
+            if t < 0 || t >= tasks.tasks.len() as i32 {
+                println!("invalid operation");
+            }
+            else {
+                println!("Are you sure you want to delete task:");
+                let task = tasks.tasks.get(t as usize).unwrap();
+                println!("({}) {}",task.category, task.formatted(true));
+
+                print!("[y/N]");
+                stdout().flush().expect("couldn't flush to screen");
+                input.clear();
+                stdin().read_line(&mut input).expect("couldn't get input");
+
+                if input.to_lowercase().starts_with('y') {
+                    println!("ok... removing task...");
+                    tasks.remove_task(t as usize);
+                    should_save = true;
+                }
+                else {
+                    println!("ok, no task was deleted");
+                }
 
             }
         }
