@@ -128,7 +128,7 @@ impl TasksManager {
         let mut i = 0;
 
         for t in &self.tasks {
-            s.push_str(&format!("{} {}\n",i,t.formatted(true)));
+            s.push_str(&format!("{}({}) {}\n",i, t.category,t.formatted(true)));
             i += 1;
         }
 
