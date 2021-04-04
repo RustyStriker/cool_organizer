@@ -114,117 +114,102 @@ fn main() {
         "edit" => {
             should_save = true;
 
-            loop { // Choose task loop
-                println!("Tasks:");
-                println!("{}",tasks.tasks_list());
-                print!("Task to edit(-1 to quit): ");
+            println!("Tasks:");
+            println!("{}",tasks.tasks_list());
+            print!("Task to edit(-1 to quit): ");
+            let _ = stdout().flush();
+            let mut task_number = String::with_capacity(4);
+            let _ = stdin().read_line(&mut task_number);
+            let t : i32 = task_number.trim().parse().unwrap_or(-1);
+            // got a task, what do we want to change?
+            // lets make sure we have a valid number tho
+
+            if t < -1 || t >= tasks.tasks.len() as i32 {
+                println!("invalid number");
+            }
+            else {
+                let mut t = tasks.tasks.get_mut(t as usize).unwrap();
+
+                println!("Editing task:");
+                println!("{}",t.formatted(true));
+                println!("Choose a property to edit:");
+                println!("0 - name\n1 - category\n2 - sub category");
+                println!("3 - priority\n4 - due date\n5 - done status");
+                println!("(-1/s) - go back to task selection");
                 let _ = stdout().flush();
-                let mut task_number = String::with_capacity(4);
-                let _ = stdin().read_line(&mut task_number);
-                let t : i32 = match task_number.trim_end_matches('\n').parse() {
-                    Ok(i) => { i }
-                    Err(e) => { 
-                        println!("ERROR: {:?}",e);
-                        continue;
-                    }
-                };
-                // got a task, what do we want to change?
-                // lets make sure we have a valid number tho
-                if t == -1 {
-                    break;
-                } 
-                else if t < -1 || t >= tasks.tasks.len() as i32 {
-                    println!("invalid number");
-                    continue;
-                }
 
-                loop {
-                    let mut t = tasks.tasks.get_mut(t as usize).unwrap();
-
-                    // Edit loop
-                    println!("Editing task:");
-                    println!("{}",t.formatted(true));
-                    println!("Choose a property to edit:");
-                    println!("0 - name\n1 - category\n2 - sub category");
-                    println!("3 - priority\n4 - due date\n5 - done status");
-                    println!("(-1/s) - go back to task selection");
-                    let _ = stdout().flush();
-
-                    let mut property = String::with_capacity(3);
-                    let _ = stdin().read_line(&mut property);
-                    let mut buff = String::new();
-                    match property.trim_end_matches('\n') {
-                        "-1" | "s" => break,
-                        "0" => {
-                            println!("current: {}", &t.name);
-                            print!("new: ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            if buff.trim_matches('\n').is_empty() {
-                                println!("task name cannot be empty!");
-                                continue;
-                            }
+                let mut property = String::with_capacity(3);
+                let _ = stdin().read_line(&mut property);
+                let mut buff = String::new();
+                match property.trim_end_matches('\n') {
+                    "0" => {
+                        println!("current: {}", &t.name);
+                        print!("new: ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        if buff.trim_matches('\n').is_empty() {
+                            println!("task name cannot be empty!");
+                        }
+                        else{
                             t.name = String::from(buff.trim_matches('\n'));
                         }
-                        "1" => {
-                            println!("current: {}", &t.category);
-                            print!("new: ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            t.category = String::from(buff.trim_matches('\n'));
-                        }
-                        "2" => {
-                            println!("current: {}", &t.sub_category);
-                            print!("new: ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            t.sub_category = String::from(buff.trim_matches('\n'));
-                        }
-                        "3" => {
-                            println!("current: {}", &t.priority);
-                            print!("new(0-3): ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            t.priority = match buff.trim_matches('\n').parse() {
-                                Ok(p) => p,
-                                Err(e) => {
-                                    println!("ERROR: {:?}",e);
-                                    continue;
-                                }
+                    }
+                    "1" => {
+                        println!("current: {}", &t.category);
+                        print!("new: ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        t.category = String::from(buff.trim_matches('\n'));
+                    }
+                    "2" => {
+                        println!("current: {}", &t.sub_category);
+                        print!("new: ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        t.sub_category = String::from(buff.trim_matches('\n'));
+                    }
+                    "3" => {
+                        println!("current: {}", &t.priority);
+                        print!("new(0-3): ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        t.priority = match buff.trim_matches('\n').parse() {
+                            Ok(p) => p,
+                            Err(e) => {
+                                println!("ERROR: {:?}",e);
+                                t.priority
                             }
                         }
-                        "4" => {
-                            let due = match &t.due {
-                                Some(d) => {
-                                    let d = d.to_localdate().unwrap();
-                                    format!("{}/{}/{}",d.day(),d.month() as i16, d.year())
-                                }
-                                None => {
-                                    String::from("None")
-                                }
-                            };
-
-                            println!("current: {}",due);
-                            print!("new(d/m/y): ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            t.due = parse_to_date(&buff.trim_matches('\n'));
-                        }
-                        "5" => {
-                            println!("current: {}", &t.done);
-                            print!("new(t/f): ");
-                            stdout().flush().expect("couldnt flush output");
-                            stdin().read_line(&mut buff).expect("coudlnt get input");
-                            t.done = buff.to_lowercase().starts_with('t');
-                        }
-                        _ => {
-                            println!("invalid option");
-                        },
-
                     }
+                    "4" => {
+                        let due = match &t.due {
+                            Some(d) => {
+                                let d = d.to_localdate().unwrap();
+                                format!("{}/{}/{}",d.day(),d.month() as i16, d.year())
+                            }
+                            None => {
+                                String::from("None")
+                            }
+                        };
 
-                }                
+                        println!("current: {}",due);
+                        print!("new(d/m/y): ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        t.due = parse_to_date(&buff.trim_matches('\n'));
+                    }
+                    "5" => {
+                        println!("current: {}", &t.done);
+                        print!("new(t/f): ");
+                        stdout().flush().expect("couldnt flush output");
+                        stdin().read_line(&mut buff).expect("coudlnt get input");
+                        t.done = buff.to_lowercase().starts_with('t');
+                    }
+                    _ => {
+                        println!("invalid option");
+                    },
 
+                }
             }
         }
         "remove" => {
