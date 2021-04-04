@@ -1,8 +1,7 @@
 use clap::{Arg, SubCommand};
 use cool_organizer::*;
 use datetime::{DatePiece, LocalDate, Month};
-use std::{fs, io::{Write}};
-use std::io::{stdin,stdout};
+use std::io::{Write, stdin, stdout};
 
 fn main() {
     let default_path = TasksManager::default_path();
@@ -43,14 +42,7 @@ fn main() {
     ;
 
     let path = matches.value_of("file").unwrap();
-    let path = if path.ends_with(".toml") { path } else { &default_path };
-    
-    let file = match fs::read_to_string(path) {
-        Ok(v) => v,
-        Err(_) => String::new(),
-    };
-
-    let mut tasks : TasksManager = toml::from_str(&file).unwrap_or(TasksManager::default());
+    let mut tasks = TasksManager::load(&path);
 
     let mut should_save = false;
 

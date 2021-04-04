@@ -48,6 +48,18 @@ impl TasksManager {
         }
     }
 
+    pub fn load(path : &str) -> TasksManager {
+        let default = TasksManager::default_path();
+        let path = if path.ends_with(".toml") { path } else { &default };
+    
+        let file = match fs::read_to_string(path) {
+            Ok(v) => v,
+            Err(_) => String::new(),
+        };
+
+        toml::from_str(&file).unwrap_or(TasksManager::default())
+    }
+
     pub fn save(&self, path : &str) -> Result<(), impl Error> {
         let toml = toml::to_string(self).unwrap();
 
