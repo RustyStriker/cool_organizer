@@ -1,7 +1,7 @@
 use clap::{Arg, SubCommand};
 use cool_organizer::*;
 use datetime::{DatePiece, LocalDate, Month};
-use std::{fs, io::{Read, Write}};
+use std::{fs, io::{Write}};
 use std::io::{stdin,stdout};
 
 fn main() {
