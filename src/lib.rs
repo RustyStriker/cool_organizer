@@ -1,5 +1,6 @@
+use datetime::Month;
 use serde_derive::{Serialize,Deserialize};
-use datetime::{LocalDate, convenience::Today, DatePiece};
+pub use datetime::{LocalDate, convenience::Today, DatePiece};
 use std::{error::Error, fs,env};
 
 
@@ -173,6 +174,26 @@ impl Date{
         match LocalDate::yd(self.year, self.day) {
             Ok(d) => Some(d),
             Err(_) => None
+        }
+    }
+    /**
+        Gives a month based on a number between 1(January) to 12(December)
+        while december is the default.
+    */
+    pub fn month_from_int(month : i32) -> Month {
+        match month {
+            1 => Month::January,
+            2 => Month::February,
+            3 => Month::March,
+            4 => Month::April,
+            5 => Month::May,
+            6 => Month::June,
+            7 => Month::July,
+            8 => Month::August,
+            9 => Month::September,
+            10 => Month::October,
+            11 => Month::November,
+            _ => Month::December,
         }
     }
 }
