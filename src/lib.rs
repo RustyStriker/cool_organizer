@@ -72,7 +72,9 @@ impl TasksManager {
     }
 
     pub fn remove_task(&mut self, task_at : usize) {
-        self.tasks.remove(task_at);
+        if task_at < self.tasks.len() {
+            self.tasks.remove(task_at);
+        }
     } 
 
     pub fn remove_done(&mut self) {
