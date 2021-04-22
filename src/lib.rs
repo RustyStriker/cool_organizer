@@ -151,6 +151,18 @@ impl TasksManager {
 
         s
     }
+
+    pub fn get_categories(&self) -> Box<Vec<String>> {
+        let mut cats = Vec::with_capacity(5);
+
+        for t in self.tasks.iter() {
+            if !cats.contains(&t.category) {
+                cats.push(t.category.clone());
+            }
+        }
+
+        Box::new(cats)
+    }
 }
 
 #[derive(Clone,Serialize,Deserialize, Copy)]
