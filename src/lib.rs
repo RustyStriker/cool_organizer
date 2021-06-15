@@ -115,7 +115,7 @@ impl TasksManager {
                     group.push(&task);
                 }
             }
-            group.sort_by_key(|a| a.priority);
+            group.sort_by_key(|a| -a.days_remianing().unwrap_or(-1));
             group.reverse();
     
             // Begin to print the stuff
@@ -299,7 +299,14 @@ impl Task {
             let month = due.month();
             
 
-            s.push_str(&format!(" - due in {} days for {}/{}", self.days_remianing().unwrap_or(0), due.day(), month as i32));
+            let days_rem = self.days_remianing().unwrap_or(0);
+
+            if days_rem == 0 {
+                s.push_str(&format!(" - due for today {}/{}", due.day(), month as i32));
+            }
+            else {
+                s.push_str(&format!(" - due in {} days for {}/{}", self.days_remianing().unwrap_or(0), due.day(), month as i32));
+            }
         }
 
         s
@@ -343,8 +350,12 @@ impl Task {
 
             let month = due.month();
             
-            s.push_str(&format!("${{alignr}} - due in {} days for {}/{}", days, due.day(), month as i32));
-            
+            if days == 0 {
+                s.push_str(&format!("${{alignr}} - due for today      {}/{}", due.day(), month as i32));
+            }
+            else {
+                s.push_str(&format!("${{alignr}} - due in {} days for {}/{}", days, due.day(), month as i32));
+            }
         }
 
         s
